@@ -1,0 +1,21 @@
+{
+  "name": "vitepixijs",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^4.2.0"
+  },
+  "dependencies": {
+    "@rwh/keystrokes": "^1.0.0-beta.12",
+    "howler": "^2.2.3",
+    "pixi-filters": "^5.2.1",
+    "pixi.js": "^7.2.4",
+    "simplex-noise": "^4.0.1"
+  }
+}
