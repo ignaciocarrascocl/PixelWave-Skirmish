@@ -14,6 +14,7 @@
   "dependencies": {
     "@rwh/keystrokes": "^1.0.0-beta.12",
     "howler": "^2.2.3",
+    "noisejs": "^2.1.0",
     "pixi-filters": "^5.2.1",
     "pixi.js": "^7.2.4",
     "simplex-noise": "^4.0.1"

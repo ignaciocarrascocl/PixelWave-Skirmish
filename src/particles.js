@@ -1,14 +1,14 @@
 import * as PIXI from 'pixi.js';
 
 
-export function effects(x, y, particles, size, app) {
+export function effects(x, y, particles, size, app, color) {
     // Create a container for particles
     const particleContainer = new PIXI.Container();
     app.stage.addChild(particleContainer);
 
     // Particle attributes
     const particleSize = size;
-    const particleColor = 0xFFFFFF;
+    const particleColor = color;
     const particleSpeed = 5;
     const particleCount = particles;
 

@@ -1,20 +1,22 @@
 import * as PIXI from "pixi.js";
-
+import { state } from "./state";
 // Define the tetramino shapes
-const tetraminos = [
+const shape = [
   // I
   [[0, 0, 1, 1, 0, 0],
   [0, 1, 1, 1, 1, 0 ],
   [1, 1, 1, 1, 1, 1]]
 ];
 
+const blockSize = state.blockSize;
+
 // Function to generate the player
 export function createPlayer(app) {
   const player = new PIXI.Container();
-  const blockSize = 10;
+  
 
   // Choose a random tetramino shape
-  const tetramino = tetraminos[Math.floor(Math.random() * tetraminos.length)];
+  const tetramino = shape[Math.floor(Math.random() * shape.length)];
 
   // Loop through the tetramino array and add blocks to the player container
   for (let i = 0; i < tetramino.length; i++) {
