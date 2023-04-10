@@ -1,11 +1,9 @@
-import { gameOver } from "./gameOver";
 import { state } from "./state";
 
 // Function for player movement
 export function playerMovement(player, app) {
 
     if(!state.gameOver){
-        console.log('game running')
         const moveSpeed = 0.2;
         const friction = 0.98;
         const keys = {
@@ -33,7 +31,9 @@ export function playerMovement(player, app) {
     
         app.ticker.add(() => {
 
-            if (player && !state.gameOver) {
+            if (!player || !player.parent) {
+                return;
+              }
 
             // Apply acceleration
             if (keys.ArrowLeft) {
@@ -74,7 +74,7 @@ export function playerMovement(player, app) {
                 player.y = app.screen.height - player.height;
                 player.vy = 0;
             }
-            }
+
             
 
         });

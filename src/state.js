@@ -1,3 +1,5 @@
+// src/state.js
+
 import { waves } from './wavesGeneration.js';
 import { generatePatterns } from './generatePatterns.js';
 
@@ -6,10 +8,10 @@ export const state = {
     playerLife: 1,
     blockSize: 10,
     currentPowerUps: [],
-    bombs: 100,
+    bombs: 9,
     weaponUpgrade: 1,
     gameStart: false,
-    gameStared: false,
+    gameStarted: false,
     waiting: false,
     waveReady: false,
     score: 0,

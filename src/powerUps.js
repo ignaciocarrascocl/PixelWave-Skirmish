@@ -16,8 +16,8 @@ const powerUps = {
       [1, 1, 1, 1, 1, 1, 1]
       
     ],
-    effect: "health",
-    color: "0xffffff",
+    effect: "bomb",
+    color: "#2EFEF7",
   },
   bomb: {
     pattern: [
@@ -30,9 +30,9 @@ const powerUps = {
       [1, 1, 1, 1, 1, 1, 1]
     ],
     effect: "health",
-    color: "0xffffff",
+    color: "#FE2E2E",
   },
-  god: {
+  weapon: {
     pattern: [
       [1, 1, 1, 1, 1, 1, 1],
       [1, 0, 0, 0, 0, 0, 1],
@@ -42,8 +42,8 @@ const powerUps = {
       [1, 0, 0, 0, 0, 0, 1],
       [1, 1, 1, 1, 1, 1, 1]
     ],
-    effect: "health",
-    color: "0xffffff",
+    effect: "weapon",
+    color: "#F7FE2E",
   },
 };
 
@@ -63,7 +63,7 @@ export function powerUp(app, enemy) {
     for (let j = 0; j < powerUpPattern[i].length; j++) {
       if (powerUpPattern[i][j] === 1) {
         const block = new PIXI.Graphics();
-        block.beginFill(0xffffff);
+        block.beginFill(selectedPowerUp.color);
         block.drawRect(0, 0, blockSize, blockSize);
         block.endFill();
         block.x = j * blockSize;

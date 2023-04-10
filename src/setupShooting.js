@@ -3,17 +3,19 @@ import { playSound } from "/src/sounds";
 import { state } from "./state";
 import { shakeScreen } from "./shakeScreen";
 
-export function setupShooting(player, app) {
+export function setupShooting(player, app, updatePlayer) {
 
   if(player){
     const bulletSize = 5;
     const bulletSpeed = 5;
     const bullets = [];
     let bombCooldown = false;
-  
-    window.addEventListener("keydown", (e) => {
-  
+
+    const shootHandler = (e) => {
+      const player = updatePlayer();
+      console.log("Player:", player); // Add logging here
       if (e.code === "KeyZ" && !bombCooldown) {
+        if (!player || state.gameOver) return;
         e.preventDefault();
         if (state.bombs) {
           state.bombs--;
@@ -32,7 +34,8 @@ export function setupShooting(player, app) {
                 i * bulletSize * 2,
                 playerY - row * bulletSize * 4,
                 bulletSize * 2,
-                bulletSize * 2
+                bulletSize * 2,
+                "#FE2E2E"
               );
               bullets.push(bullet);
               app.stage.addChild(bullet);
@@ -43,9 +46,12 @@ export function setupShooting(player, app) {
           shakeScreen(app, 5, 3);
         }
       }
-    });
+    };
+  
+    window.addEventListener("keydown", shootHandler);
     // Rest of the function remains unchanged
     window.addEventListener("keydown", (e) => {
+      if (state.gameOver) return;
       if (e.code === "KeyX") {
         e.preventDefault();
   
@@ -68,7 +74,8 @@ export function setupShooting(player, app) {
               startX + i * bulletSpacing,
               playerY + yOffset,
               bulletSize,
-              bulletSize
+              bulletSize,
+              "#F7FE2E"
             );
             bullets.push(bullet);
             app.stage.addChild(bullet);
@@ -107,9 +114,9 @@ export function setupShooting(player, app) {
   
 }
 
-function createBullet(x, y, width, height) {
+function createBullet(x, y, width, height, color) {
   const bullet = new PIXI.Graphics();
-  bullet.beginFill(0xffffff);
+  bullet.beginFill(color);
   bullet.drawRect(0, 0, width, height);
   bullet.endFill();
   bullet.x = x - width / 2;

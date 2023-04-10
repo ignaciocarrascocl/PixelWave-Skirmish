@@ -17,7 +17,7 @@ export function detectBulletCollision(bullet, bullets, enemyObj, app) {
       bulletGlobal.y + bullet.height > blockGlobal.y &&
       bulletGlobal.y < blockGlobal.y + block.height
     ) {
-      playSound("splatter.wav");
+      playSound("explosion.wav", 0.5, 2);
       // Remove the bullet and block
       app.stage.removeChild(bullet);
       bullets.splice(bullets.indexOf(bullet), 1);
@@ -36,7 +36,7 @@ export function detectBulletCollision(bullet, bullets, enemyObj, app) {
         effects(blockGlobal.x, blockGlobal.y, 5, 3, app, enemy.customColor);
         app.stage.removeChild(enemy);
         state.enemies.splice(state.enemies.indexOf(enemyObj), 1);
-        playSound("explosion.wav", 1);
+        playSound("explosion.wav", 1, 1);
         state.enemyCounter--;
         state.score = state.score + 10;
         shakeScreen(app, 5, 10);

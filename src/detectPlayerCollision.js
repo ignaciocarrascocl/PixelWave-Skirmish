@@ -7,6 +7,8 @@ import { shakeScreen } from "./shakeScreen";
 import { gameOver } from "./gameOver";
 
 export function detectPlayerCollision(player, enemy, app) {
+  if(player){
+    
     for (let i = player.children.length - 1; i >= 0; i--) {
       const playerBlock = player.children[i];
       const playerBounds = playerBlock.getBounds();
@@ -37,5 +39,7 @@ export function detectPlayerCollision(player, enemy, app) {
         }
       }
     }
+  }
+
   }
   

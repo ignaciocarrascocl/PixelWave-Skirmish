@@ -6,7 +6,6 @@ import { playSound } from "/src/sounds";
 
 export function gameLogic(app) {
   const { enemyCounter, waveReady, wave } = state;
-
   if (!state.gameStart && !state.waiting) {
     // first run of the game.
     const announcementText = createAnnouncement(app);

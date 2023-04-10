@@ -63,3 +63,17 @@ export function playSound(fileName, volume = 0.5, pitch = 1) {
     console.log('Sound file not found: ' + fileName);
   }
 }
+
+let sound = new Howl({
+  src: '/assets/audio/soundtrack.webm',
+  html5: false,
+  pool: 20
+});
+
+export function playSoundtrack() {
+  // Stop the sound if it's currently playing
+  sound.stop();
+
+  // Play the sound
+  sound.play();
+}

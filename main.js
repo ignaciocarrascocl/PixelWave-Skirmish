@@ -13,52 +13,78 @@ import { state } from "./src/state";
 import { createBackground } from "./src/background";
 import { detectPlayerCollision } from "./src/detectPlayerCollision";
 import { gameLogic } from "./src/gameLogic";
-import { ui, updateUiText } from "./src/ui";
+import { createUi, updateUiText } from "./src/ui";
 import { pickUpPowerUp } from "./src/pickUpPowerUp";
-import { gameOver } from "./src/gameOver";
+import { gameStart } from "./src/gameStart";
+import { playSoundtrack } from "./src/sounds";
 
 // Create the game app
+let uiCreated = false;
+let scoreText;
+let uiText;
+let currentPlayer;
+
+function updatePlayer() {
+  return currentPlayer;
+}
+
 const app = createApp();
-
-// Set up the game elements
 createBackground(app);
-const player = createPlayer(app);
-const bullets = setupShooting(player, app);
+let stateStore = state;
 
-playerMovement(player, app);
+function createStage() {
+  const player = createPlayer(app);
+  currentPlayer = player;
+  const bullets = setupShooting(player, app, updatePlayer);
+  playSoundtrack()
+  playerMovement(player, app);
 
-// Create the text elements
-const scoreText = createScoreText(app, 20, 20);
-const uiText = ui(app);
+  if (!uiCreated) {
+    scoreText = createScoreText(app, 10, 10);
+    uiText = createUi(app);
+    uiCreated = true;
+  }
 
-// Spawn enemies at a regular interval
-setInterval(function () {
-  spawnEnemy(app, player);
-}, 300);
+  setInterval(function () {
+    spawnEnemy(app, player);
+  }, 300);
+  // Main game loop
 
-// Main game loop
-app.ticker.add(() => {
+  app.ticker.add(() => {
+    if (!state.gameOver) {
+      checkForPowerUps(app, player);
+      gameLogic(app);
+      updateScoreText(app, scoreText); // Pass 'scoreText' as an argument
+      updateUiText(uiText, app);
+      checkCollisions(bullets, app, player);
+      state.enemies.forEach((enemy) => {
+        enemy.update();
+        detectPlayerCollision(player, enemy, app); // Add this line here
+      });
+    } else {
+      state.enemies.forEach((enemy) => {
+        app.stage.removeChild(enemy.container);
+      });
+    }
+  });
+  stateStore = state;
+}
 
+window.addEventListener("keydown", (e) => {
+  if (e.code && state.gameOver) {
+    console.log('hello!');
+    gameStart(app);
+    createStage();
+  }
+});
+
+function checkForPowerUps(app, player) {
   for (const powerUp of state.currentPowerUps) {
     pickUpPowerUp(app, player, powerUp);
   }
-  // Check for player collisions with enemies
-  for (const enemy of state.enemies) {
-    detectPlayerCollision(player, enemy, app);
-  }
+}
 
-  // Execute the game logic
-  gameLogic(app);
-
-  updateScoreText(scoreText);
-  updateUiText(uiText);
-
-  // Update enemy positions
-  state.enemies.forEach((enemyObj) => {
-    enemyObj.update();
-  });
-
-  // Check for bullet collisions with enemies
+function checkCollisions(bullets, app, player) {
   for (let i = bullets.length - 1; i >= 0; i--) {
     const bullet = bullets[i];
     let collision = false;
@@ -69,4 +95,6 @@ app.ticker.add(() => {
       }
     }
   }
-});
+}
+
+createStage();

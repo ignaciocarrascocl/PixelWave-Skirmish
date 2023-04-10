@@ -11,6 +11,7 @@ export function spawnEnemy(app, player) {
     let maxType3 = state.waves[currentWave].type3;
 
 if(!state.waiting && state.gameStarted){
+  console.log('running the spawn generator')
   if(maxType1 > state.generatedEnemies.type1){
     let x = Math.random() * (app.screen.width - (app.screen.width * 0.1) * 2) + app.screen.width * 0.1;
     const enemy = createEnemy(x, app, player, 'type1');
@@ -56,7 +57,7 @@ function createEnemy(x, app, player, type) {
         let y = -30;
         if (type === 'type1') {
           randomColor = state.colors[0][Math.floor(Math.random() * state.colors[0].length)];
-          enemy.move = targetMovement(enemy, app, player).update;
+          enemy.move = targetMovement(enemy, app).update;
           enemy.position.set(x, y);
           enemy.customColor = randomColor;
 
@@ -94,6 +95,7 @@ function randomMovement(enemy, app) {
   enemy.x = Math.random() * (app.screen.width - 20) + 10; // set random starting X position
   enemy.y = -enemy.height; // set starting Y position just above the top edge of the screen
   const update = () => {
+    if (!player) return; 
     timeCounter++;
     if (timeCounter >= 120) { // move every 2 seconds (120 frames at 60fps)
       distance = Math.random() * (app.screen.height * 0.2);
@@ -112,7 +114,8 @@ function randomMovement(enemy, app) {
 
 
 function targetMovement(enemy, app, player) {
-  if(player){
+  if(!state.gameOver){
+    
     let distance = 0;
     let timeCounter = 0;
     let moveDirection = 1; // 1: move down, -1: move up
@@ -163,6 +166,7 @@ function zigzagMovement(enemy, app) {
   enemy.x = Math.random() * (app.screen.width - 20) + 10; // set random starting X position
   enemy.y = -enemy.height; // set starting Y position just above the top edge of the screen
   const update = () => {
+    if (!player) return; 
     timeCounter++;
     if (timeCounter >= 120) { // move every 2 seconds (120 frames at 60fps)
       distance = Math.random() * (app.screen.height * 0.2);
