@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js";
 import { state } from "./state";
+import { restartPlayer } from "./restartPlayer";
 // Define the tetramino shapes
 const shape = [
   // I
@@ -32,9 +33,7 @@ export function createPlayer(app) {
       }
     }
   }
-
-  player.x = (app.screen.width - player.width) / 2;
-  player.y = app.screen.height - player.height * 2;
+  restartPlayer(player, app)
   app.stage.addChild(player);
 
   return player;

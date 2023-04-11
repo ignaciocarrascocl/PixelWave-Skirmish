@@ -4,7 +4,7 @@ import { waves } from './wavesGeneration.js';
 import { generatePatterns } from './generatePatterns.js';
 
 export const state = {
-    gameOver: false,
+    gameOver: true,
     playerLife: 1,
     blockSize: 10,
     currentPowerUps: [],
@@ -15,7 +15,6 @@ export const state = {
     waiting: false,
     waveReady: false,
     score: 0,
-    maxEnemies: 10,
     enemyCounter: 0,
     enemies: [],
     wave: 1,
@@ -31,5 +30,6 @@ export const state = {
       ["#008000", "#228B22", "#00FF00"],
     ],
     // Tetromino T-shaped pattern
-    patterns:  generatePatterns()
+    patterns:  generatePatterns(),
+    isPlayerMovementInitialized: false
   };

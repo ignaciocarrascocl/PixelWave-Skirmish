@@ -1,5 +1,4 @@
 // gameOver.js
-import { createAnnouncement, animateAnnouncement } from "./createAnnouncement";
 import { playSound } from "./sounds";
 import { state } from "./state";
 import * as PIXI from "pixi.js";
@@ -7,35 +6,53 @@ import * as PIXI from "pixi.js";
 export function gameOver(app, player) {
   state.gameOver = true;
 
-  if (player.parent) {
-    player.parent.removeChild(player);
-  }
-  player.destroy();
-  const announcementText = createAnnouncement(app);
-  animateAnnouncement(announcementText, app, `Game over`);
+  player.x = (app.screen.width - player.width) / 2;
+  player.y = app.screen.height - player.height * 2;
+
   playSound("start.wav");
 
-  const scoreText = new PIXI.Text(`Score: ${state.score}`, {
-    fontFamily: 'Bungee',
-    fontSize: 28,
-    fill: '#FFFF00'    , // white
-    align: 'center',
-    fontWeight: 'bold',
+  const gameOverLines = [
+    { text: () => `GAME OVER`, fill: "#2EFEF7" },
+    { text: () => `Score: ${state.score}`, fill: "#FE2E2E" },
+    { text: () => `Start again\n press any key`, fill: "#F7FE2E" },
+  ];
+
+  const textStyle = {
+    fontFamily: "Bungee",
+    fontSize: 24,
+    align: "center",
+  };
+
+  gameOverLines.forEach((line, index) => {
+    const gameOveText = new PIXI.Text(line.text(), { ...textStyle, fill: line.fill });
+    gameOveText.x = (app.screen.width - gameOveText.width) / 2;
+    gameOveText.y =
+      app.screen.height / 2 -
+      (gameOverLines.length * textStyle.fontSize) / 2 +
+      index * textStyle.fontSize * 1.2;
+    gameOveText.alpha = 0;
+    gameOveText.name = "gameOverText";
+
+    if (index === 2) {
+      setTimeout(() => {
+        fadeInText(gameOveText, app);
+      }, 3000);
+    } else {
+      fadeInText(gameOveText, app);
+    }
+
+    app.stage.addChild(gameOveText);
   });
-  scoreText.position.set(app.screen.width / 2, app.screen.height / 2 - 50);
-  scoreText.anchor.set(0.5);
+}
 
-  const button = new PIXI.Text("Play Again\n (press any key)", {
-    fontFamily: 'Bungee',
-    fontSize: 28,
-    fill: '#0000FF', // white
-    align: 'center',
-    fontWeight: 'bold',
-     });
-  button.position.set(app.screen.width / 2, app.screen.height / 2 + 50);
-  button.anchor.set(0.5);
+function fadeInText(textObject, app) {
+  const onFadeIn = delta => {
+    if (textObject.alpha < 1) {
+      textObject.alpha += 0.01 * delta;
+    } else {
+      app.ticker.remove(onFadeIn);
+    }
+  };
 
-  app.stage.addChild(scoreText, button);
-
-  // show a text, with PIXIJS that says Score: state.score and a button to start again. the button should call "gameStart()"
+  app.ticker.add(onFadeIn);
 }

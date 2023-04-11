@@ -15,6 +15,7 @@ if(player){
                 state.score = state.score+10
             } else if(powerup.type == 'health'){
                 regainHealth(player)
+                state.playerLife++
                 state.score = state.score+10
 
             } else {

@@ -3,12 +3,11 @@
 import * as PIXI from "pixi.js";
 import { state } from "./state";
 
-// Add 'app' as a parameter
 export function createUi(app) {
   const uiTextLines = [
-    { text: () => `Health: ${state.playerLife}`, fill: '#2EFEF7' }, // red
-    { text: () => `Bombs: ${state.bombs}`, fill: "#FE2E2E" }, // green
-    { text: () => `Weapon: ${state.weaponUpgrade}`, fill: "#F7FE2E"}, // blue
+    { text: () => `Health: ${state.playerLife}`, fill: '#2EFEF7' },
+    { text: () => `Bombs: ${state.bombs}`, fill: "#FE2E2E" },
+    { text: () => `Weapon: ${state.weaponUpgrade}`, fill: "#F7FE2E"},
   ];
 
   const textStyle = {
@@ -29,11 +28,16 @@ export function createUi(app) {
 }
 
 export function updateUiText(uiTextLines, app) {
-  uiTextLines.forEach((line, index) => {
+  const updatedText = [
+    `Health: ${state.playerLife}`,
+    `Bombs: ${state.bombs}`,
+    `Weapon: ${state.weaponUpgrade}`
+  ];
+
+  uiTextLines.forEach((_, index) => {
     const uiText = app.stage.getChildByName(`uiText-${index}`);
     if (uiText) {
-      uiText.text = line.text();
+      uiText.text = updatedText[index];
     }
   });
 }
-
