@@ -45,10 +45,10 @@ function createEnemy(x, app, player, type) {
       const randomColor = state.colors[colorSetIndex][randomColorIndex];
       const movement =
         type === "type1"
-          ? randomMovement(enemy, app, player).update
+          ? movementType1(enemy, app, player).update
           : type === "type2"
-          ? randomMovement(enemy, app, player).update
-          : randomMovement(enemy, app).update;
+          ? movementType2(enemy, app, player).update
+          : movementType3(enemy, app).update;
       enemy.move = movement;
       enemy.position.set(x, -30);
       enemy.customColor = randomColor;

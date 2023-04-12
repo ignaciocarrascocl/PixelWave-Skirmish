@@ -1,86 +1,52 @@
 import { state } from "./state";
 
-// Function for player movement
 export function playerMovement(player, app) {
-    if (state.isPlayerMovementInitialized) {
-        return;
-      }
-      state.isPlayerMovementInitialized = true;
-      
-  if (!state.gameOver) {
-    const moveSpeed = 0.2;
-    const friction = 0.98;
-    const keys = {
-      ArrowLeft: false,
-      ArrowRight: false,
-      ArrowUp: false,
-      ArrowDown: false,
-    };
+  if (state.isPlayerMovementInitialized) return;
+  state.isPlayerMovementInitialized = true;
 
-    // Initialize player velocity
-    player.vx = 0;
-    player.vy = 0;
+  const moveSpeed = 0.2, friction = 0.98;
+  const keys = { ArrowLeft: false, ArrowRight: false, ArrowUp: false, ArrowDown: false };
 
-    document.addEventListener("keydown", (e) => {
-      if (keys.hasOwnProperty(e.code)) {
-        keys[e.code] = true;
-      }
-    });
+  player.vx = player.vy = 0;
 
-    document.addEventListener("keyup", (e) => {
-      if (keys.hasOwnProperty(e.code)) {
-        keys[e.code] = false;
-      }
-    });
+  document.addEventListener("keydown", (e) => { if (keys.hasOwnProperty(e.code)) keys[e.code] = true; });
+  document.addEventListener("keyup", (e) => { if (keys.hasOwnProperty(e.code)) keys[e.code] = false; });
 
-    app.ticker.add(() => {
-      // Apply acceleration
-      if(!state.gameOver){
-        if (keys.ArrowLeft) {
-          player.vx -= moveSpeed;
+  app.ticker.add(() => {
+    if (!state.gameOver) {
+      player.vx += (keys.ArrowRight - keys.ArrowLeft) * moveSpeed;
+      player.vy += (keys.ArrowDown - keys.ArrowUp) * moveSpeed;
+    } else {
+      player.vx = player.vy = 0;
+    }
+
+    player.x += player.vx;
+    player.y += player.vy;
+    player.vx *= friction;
+    player.vy *= friction;
+    if (player) keepPlayerBounds(app, player);
+  });
+}
+
+
+
+function keepPlayerBounds(app, player){
+
+        // Keep player within screen bounds
+        if (player.x < 0) {
+          player.x = 0;
+          player.vx = 0;
         }
-        if (keys.ArrowRight) {
-          player.vx += moveSpeed;
+        if (player.x > app.screen.width - player.width) {
+          player.x = app.screen.width - player.width;
+          player.vx = 0;
         }
-        if (keys.ArrowUp) {
-          player.vy -= moveSpeed;
+        if (player.y < 0) {
+          player.y = 0;
+          player.vy = 0;
         }
-        if (keys.ArrowDown) {
-          player.vy += moveSpeed;
+        if (player.y > app.screen.height - player.height) {
+          player.y = app.screen.height - player.height;
+          player.vy = 0;
         }
-      }
-
-
-      // Apply friction
-      player.vx *= friction;
-      player.vy *= friction;
-
-      if (state.gameOver) {
-        player.vx = 0;
-        player.vy = 0;
-      }
-
-      // Update player position
-      player.x += player.vx;
-      player.y += player.vy;
-
-      // Keep player within screen bounds
-      if (player.x < 0) {
-        player.x = 0;
-        player.vx = 0;
-      }
-      if (player.x > app.screen.width - player.width) {
-        player.x = app.screen.width - player.width;
-        player.vx = 0;
-      }
-      if (player.y < 0) {
-        player.y = 0;
-        player.vy = 0;
-      }
-      if (player.y > app.screen.height - player.height) {
-        player.y = app.screen.height - player.height;
-        player.vy = 0;
-      }
-    });
-  }
 }

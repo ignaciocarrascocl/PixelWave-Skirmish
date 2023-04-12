@@ -15,7 +15,7 @@ import { createUi, updateUiText } from "./src/ui";
 import { pickUpPowerUp } from "./src/pickUpPowerUp";
 import { gameStart } from "./src/gameStart";
 import { playSoundtrack } from "./src/sounds";
-import * as PIXI from "pixi.js";
+import { createStartText } from "./src/createStartText";
 
 // Initialize variables
 let uiCreated = false;
@@ -23,7 +23,8 @@ let scoreText;
 let uiText;
 let updateFunction;
 let shotTimer = 0;
-
+let hasGameStartedOnce = false;
+let gameOverTimestamp = null;
 
 // Create the application and the player
 const app = createApp();
@@ -44,7 +45,6 @@ setInterval(function () {
 
 // Create the game stage
 function createStage() {
-
   shotTimer = 0;
   if (state.gameOver) {
     return;
@@ -69,20 +69,26 @@ function createStage() {
       state.enemies.forEach((enemy) => {
         enemy.update();
         detectPlayerCollision(player, enemy, app);
-  
+
         // Update this block of code inside the forEach loop
         if (enemy.isShot) {
           shotTimer++;
-  
+
           // Determine the direction randomly
           let moveDirection = Math.random() < 0.5 ? -1 : 1;
-          let distanceToEdge = moveDirection === -1 ? enemy.container.x : app.screen.width - enemy.container.x;
-          let distanceToMove = distanceToEdge * Math.random() * 0.3 + distanceToEdge * 0.5; // randomly move between 50% and 80% of the distance to the edge
-  
-          if (shotTimer <= 180) { // 3 seconds (assuming 60 FPS)
-            enemy.container.x += moveDirection * distanceToMove / (60 * 3); // move enemy randomly
-          } else if (shotTimer > 180 && shotTimer <= 240) { // 1 second (assuming 60 FPS)
-            enemy.container.x += moveDirection * distanceToMove / 60; // move enemy randomly
+          let distanceToEdge =
+            moveDirection === -1
+              ? enemy.container.x
+              : app.screen.width - enemy.container.x;
+          let distanceToMove =
+            distanceToEdge * Math.random() * 0.3 + distanceToEdge * 0.5; // randomly move between 50% and 80% of the distance to the edge
+
+          if (shotTimer <= 180) {
+            // 3 seconds (assuming 60 FPS)
+            enemy.container.x += (moveDirection * distanceToMove) / (60 * 3); // move enemy randomly
+          } else if (shotTimer > 180 && shotTimer <= 240) {
+            // 1 second (assuming 60 FPS)
+            enemy.container.x += (moveDirection * distanceToMove) / 60; // move enemy randomly
           } else if (shotTimer > 240) {
             enemy.isShot = false;
             shotTimer = 0;
@@ -95,13 +101,7 @@ function createStage() {
       });
     }
   });
-  
-  
-  
 }
-
-let hasGameStartedOnce = false;
-let gameOverTimestamp = null;
 
 window.addEventListener("keydown", (e) => {
   if (e.code) {
@@ -116,7 +116,6 @@ window.addEventListener("keydown", (e) => {
       createStage();
     } else if (hasGameStartedOnce && state.gameOver) {
       const currentTime = Date.now();
-
       if (!gameOverTimestamp) {
         gameOverTimestamp = currentTime;
       }
@@ -149,20 +148,6 @@ function checkCollisions(bullets, app) {
   }
 }
 
-function createStartText(app) {
-  const startText = new PIXI.Text("Press any key", {
-    fontFamily: "Bungee",
-    fontSize: 24,
-    fill: "#FFFFFF",
-    align: "center",
-  });
-
-  startText.x = (app.screen.width - startText.width) / 2;
-  startText.y = app.screen.height / 2;
-  startText.name = "startText";
-  app.stage.addChild(startText);
-
-  return startText;
-}
+createStartText(app);
 
 createStage();

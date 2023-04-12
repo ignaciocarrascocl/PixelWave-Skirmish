@@ -4,10 +4,11 @@ import { state } from './state.js';
 import { restartPlayer } from './restartPlayer.js';
 
 export function gameStart(app, player) {
+
   if(state.gameOver){
     for (let i = app.stage.children.length - 1; i >= 0; i--) {
       const child = app.stage.children[i];
-      if (child.name == "endGameScore" || child.name === "endGameStartAgain" || child.name === 'gameOverText') {
+      if (child.name == "startText" || child.name == "endGameScore" || child.name === "endGameStartAgain" || child.name === 'gameOverText') {
         app.stage.removeChild(child);
       }
     }
@@ -38,5 +39,13 @@ export function gameStart(app, player) {
     ];
     state.patterns = generatePatterns();
   }
+
+  for (let i = app.stage.children.length - 1; i >= 0; i--) {
+    const child = app.stage.children[i];
+    if (child.name == "startText") {
+      app.stage.removeChild(child);
+    }
+  }
+
   restartPlayer(player, app)
 }
