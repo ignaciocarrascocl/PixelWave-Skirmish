@@ -46,6 +46,6 @@ export function gameStart(app, player) {
       app.stage.removeChild(child);
     }
   }
-
   restartPlayer(player, app)
+  
 }

@@ -5,7 +5,7 @@ import { generatePatterns } from './generatePatterns.js';
 
 export const state = {
     gameOver: true,
-    playerLife: 1,
+    playerLife: 10,
     blockSize: 10,
     currentPowerUps: [],
     bombs: 9,

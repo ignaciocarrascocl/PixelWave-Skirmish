@@ -69,31 +69,6 @@ function createStage() {
       state.enemies.forEach((enemy) => {
         enemy.update();
         detectPlayerCollision(player, enemy, app);
-
-        // Update this block of code inside the forEach loop
-        if (enemy.isShot) {
-          shotTimer++;
-
-          // Determine the direction randomly
-          let moveDirection = Math.random() < 0.5 ? -1 : 1;
-          let distanceToEdge =
-            moveDirection === -1
-              ? enemy.container.x
-              : app.screen.width - enemy.container.x;
-          let distanceToMove =
-            distanceToEdge * Math.random() * 0.3 + distanceToEdge * 0.5; // randomly move between 50% and 80% of the distance to the edge
-
-          if (shotTimer <= 180) {
-            // 3 seconds (assuming 60 FPS)
-            enemy.container.x += (moveDirection * distanceToMove) / (60 * 3); // move enemy randomly
-          } else if (shotTimer > 180 && shotTimer <= 240) {
-            // 1 second (assuming 60 FPS)
-            enemy.container.x += (moveDirection * distanceToMove) / 60; // move enemy randomly
-          } else if (shotTimer > 240) {
-            enemy.isShot = false;
-            shotTimer = 0;
-          }
-        }
       });
     } else {
       state.enemies.forEach((enemy) => {

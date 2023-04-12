@@ -19,6 +19,7 @@ export function detectBulletCollision(bullet, bullets, currentEnemy, app) {
       bulletGlobal.y + bullet.height > blockGlobal.y &&
       bulletGlobal.y < blockGlobal.y + block.height
     ) {
+
       // Remove the bullet and block
       app.stage.removeChild(bullet);
       bullets.splice(bullets.indexOf(bullet), 1);
@@ -37,7 +38,6 @@ export function detectBulletCollision(bullet, bullets, currentEnemy, app) {
         playSound("explosion.wav", 0.5, 2);
         effects(blockGlobal.x, blockGlobal.y, 10, 5, app, enemy.customColor);
         shakeScreen(app, 5, 2);
-        currentEnemy.isShot = true;
       }
       return true;
     }

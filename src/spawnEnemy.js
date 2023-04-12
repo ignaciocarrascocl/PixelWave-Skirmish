@@ -10,12 +10,8 @@ export function spawnEnemy(app, player) {
     for (let i = 0; i < types.length; i++) {
       let type = types[i];
       if (wave[type] > state.generatedEnemies[type]) {
-        let x =
-          Math.random() * (app.screen.width - app.screen.width * 0.1 * 2) +
-          app.screen.width * 0.1;
-        const enemy = createEnemy(x, app, player, type);
-        enemy.isShot = false;
-        console.log(enemy.isShot)
+        let xPosition = Math.random() * (app.screen.width - app.screen.width * 0.1 * 2 - 50 * 2) + app.screen.width * 0.1 -50;
+        const enemy = createEnemy(xPosition, app, player, type);
         state.enemies.push(enemy);
         state.enemyCounter++;
         state.generatedEnemies[type]++;
@@ -28,7 +24,7 @@ export function spawnEnemy(app, player) {
   }
 }
 
-function createEnemy(x, app, player, type) {
+function createEnemy(xPosition, app, player, type) {
   const pattern =
     state.patterns[Math.floor(Math.random() * state.patterns.length)];
   const enemy = new PIXI.Container();
@@ -45,12 +41,12 @@ function createEnemy(x, app, player, type) {
       const randomColor = state.colors[colorSetIndex][randomColorIndex];
       const movement =
         type === "type1"
-          ? movementType1(enemy, app, player).update
+          ? movementType1(enemy, app).update
           : type === "type2"
           ? movementType2(enemy, app, player).update
           : movementType3(enemy, app).update;
       enemy.move = movement;
-      enemy.position.set(x, -30);
+      enemy.position.set(xPosition, -30);
       enemy.customColor = randomColor;
       block.beginFill(randomColor);
       block.drawRect(0, 0, blockSize, blockSize);
@@ -64,53 +60,150 @@ function createEnemy(x, app, player, type) {
   return { container: enemy, update: enemy.move };
 }
 
-function randomMovement(enemy, app) {
-  let distance = app.screen.height * 0.2;
+function movementType1(enemy, app) {
+  const initialDistance = app.screen.height * 0.2;
+  const maxDistance = app.screen.height * 0.7;
+  const minDistance = app.screen.height * 0.1;
+  let currentDistance = initialDistance;
   let timeCounter = 0;
   let moveDirection = 1;
-  let shotTimer = 0;
-  let isMovingRight = false;
+  const maxTimeCounter = 240; // doubled the time counter to slow down the movement
+  const horizontalSpeed = Math.random() * 2 + 0.5; // random horizontal speed between 0.5 and 2.5
+  const amplitude = app.screen.height * 0.005; // amplitude of the sinusoidal movement
+
   enemy.x = Math.random() * (app.screen.width * 0.8) + app.screen.width * 0.1;
   enemy.y = -enemy.height;
 
   const update = () => {
     timeCounter++;
 
-    if (enemy.isShot) {
-      shotTimer++;
+    if (timeCounter >= maxTimeCounter) {
+      currentDistance = Math.random() * initialDistance;
+      timeCounter = 0;
 
-      if (shotTimer <= 180) { // 3 seconds (assuming 60 FPS)
-        if (moveDirection === 1 && enemy.y > app.screen.height * 0.7) {
-          moveDirection = -1;
-        } else if (moveDirection === -1 && enemy.y < app.screen.height * 0.1) {
-          moveDirection = 1;
-        }
-
-        enemy.y += (distance / 120) * moveDirection; // move enemy up or down
-      } else if (shotTimer > 180 && shotTimer <= 240) { // 1 second (assuming 60 FPS)
-        if (!isMovingRight) {
-          moveDirection = 1;
-          isMovingRight = true;
-        }
-
-        enemy.x += app.screen.width * 0.5 / 60; // move enemy to the right
-      } else {
-        enemy.isShot = false;
-        shotTimer = 0;
-        isMovingRight = false;
+      if (moveDirection === 1 && enemy.y > maxDistance) {
+        moveDirection = -1;
+      } else if (moveDirection === -1 && enemy.y < minDistance) {
+        moveDirection = 1;
       }
-    } else {
-      if (timeCounter >= 120) {
-        distance = Math.random() * (app.screen.height * 0.2);
+    }
+
+    enemy.y += amplitude * Math.sin(2 * Math.PI * timeCounter / maxTimeCounter) * moveDirection; // sinusoidal vertical movement
+    enemy.x += horizontalSpeed * moveDirection; // horizontal movement
+
+    // Keep the enemy within the screen bounds
+    if (enemy.x >= app.screen.width - enemy.width) {
+      moveDirection = -1;
+    } else if (enemy.x <= 0) {
+      moveDirection = 1;
+    }
+  };
+  return { update };
+}
+
+function movementType2(enemy, app) {
+  const initialY = app.screen.height * 0.2;
+  const maxDistance = app.screen.height * 0.7;
+  const minDistance = app.screen.height * 0.1;
+  const enemyWidth = enemy.width;
+  const enemyHeight = enemy.height;
+  let currentY = initialY;
+  let timeCounter = 0;
+  let moveDirection = 1;
+  const maxTimeCounter = 240;
+  const amplitude = app.screen.height * 0.005;
+
+  const update = () => {
+    timeCounter++;
+
+    if (timeCounter >= maxTimeCounter) {
+
+      currentY = Math.random() * (maxDistance - minDistance) + minDistance;
+      timeCounter = 0;
+
+      if (moveDirection === 1 && enemy.y > currentY) {
+        moveDirection = -1;
+      } else if (moveDirection === -1 && enemy.y < currentY) {
+        moveDirection = 1;
+      }
+    }
+
+    enemy.y += amplitude * Math.sin(2 * Math.PI * timeCounter / maxTimeCounter) * moveDirection;
+
+    // Keep the enemy within the screen bounds
+    if (enemy.x >= app.screen.width - enemyWidth) {
+      enemy.x = app.screen.width - enemyWidth;
+    } else if (enemy.x <= 0) {
+      enemy.x = 0;
+    }
+    if (enemy.y >= app.screen.height - enemyHeight) {
+      enemy.y = app.screen.height - enemyHeight;
+    } else if (enemy.y <= 0) {
+      enemy.y = 0;
+    }
+  };
+
+  return { update };
+}
+
+
+function movementType3(enemy, app) {
+  const endY1 = app.screen.height * 0.4;
+  const endX = enemy.x;
+  const endY2 = app.screen.height - enemy.height;
+  const endY3 = app.screen.height * 0.1;
+  const endY4 = app.screen.height * 0.2;
+
+  let timeCounter = 0;
+  let moveType = 1;
+  const moveSpeed = app.screen.height * 0.005;
+
+  const update = () => {
+    timeCounter++;
+
+    if (moveType === 1) {
+      enemy.y += moveSpeed;
+      if (enemy.y >= endY1) {
+        moveType = 2;
         timeCounter = 0;
-        if (moveDirection === 1 && enemy.y > app.screen.height * 0.7) {
-          moveDirection = -1;
-        } else if (moveDirection === -1 && enemy.y < app.screen.height * 0.1) {
-          moveDirection = 1;
-        }
       }
+    } else if (moveType === 2) {
+      enemy.x += (endX - enemy.x) / (app.ticker.FPS * 1); // move in 1 second
+      enemy.y = endY1;
+      if (timeCounter >= app.ticker.FPS * 1) {
+        moveType = 3;
+        timeCounter = 0;
+      }
+    } else if (moveType === 3) {
+      enemy.y += moveSpeed;
+      if (enemy.y >= endY2) {
+        moveType = 4;
+        timeCounter = 0;
+      }
+    } else if (moveType === 4) {
+      enemy.y -= moveSpeed;
+      if (enemy.y <= endY3) {
+        moveType = 5;
+        timeCounter = 0;
+      }
+    } else if (moveType === 5) {
+      enemy.y -= moveSpeed;
+      if (enemy.y <= endY4) {
+        moveType = 1;
+        timeCounter = 0;
+      }
+    }
 
-      enemy.y += (distance / 120) * moveDirection; // move enemy up or down
+    // Keep the enemy within the screen bounds
+    if (enemy.x >= app.screen.width - enemy.width) {
+      enemy.x = app.screen.width - enemy.width;
+    } else if (enemy.x <= 0) {
+      enemy.x = 0;
+    }
+    if (enemy.y >= app.screen.height - enemy.height) {
+      enemy.y = app.screen.height - enemy.height;
+    } else if (enemy.y <= 0) {
+      enemy.y = 0;
     }
   };
 
