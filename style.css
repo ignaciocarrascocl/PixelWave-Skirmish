@@ -15,6 +15,77 @@
 }
 
 canvas {
+  transform: scale(0.8);
+}
+
+div#dpad {
+  position: relative;
+}
+
+.direction {
+  position: absolute;
+  height: 4rem;
+  width: 4rem;
+  text-align: center;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+div#controls {
+  display: flex;
+  justify-content: space-between;
+  height: 10rem;
+}
+
+.button {
+  background: white;
+  font-size: 24px;
+  font-weight: 900;
+  height: 4rem;
+  width: 4rem;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+div#buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 9rem;
+}
+
+div#top {
+  top: 0;
+  left: 3rem;
+  transform: rotate(-90deg);
+}
+
+div#left {
+  top: 3rem;
+  transform: rotate(180deg);
+}
+
+div#right {
+  left: 6rem;
+  top: 3rem;
+}
+
+div#down {
+  top: 6rem;
+  left: 3rem;
+  transform: rotate(90deg);
+}
+
+#container {
+  margin: 0 auto;
+  width: auto;
+}
+canvas {
   border-radius: 20px;
   margin: 0 auto;
 }

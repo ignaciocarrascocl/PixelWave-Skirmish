@@ -26,7 +26,8 @@ let shotTimer = 0;
 let hasGameStartedOnce = false;
 let gameOverTimestamp = null;
 
-// Create the application and the player
+window.addEventListener("load", (e) => {
+  // Create the application and the player
 const app = createApp();
 
 createBackground(app);
@@ -126,3 +127,6 @@ function checkCollisions(bullets, app) {
 createStartText(app);
 
 createStage();
+
+
+});

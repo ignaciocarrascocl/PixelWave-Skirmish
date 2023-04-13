@@ -9,7 +9,7 @@ export function createApp() {
   });
 
   globalThis.__PIXI_APP__ = app;
-  document.body.appendChild(app.view);
+  document.getElementById('game').appendChild(app.view);
 
   return app;
 }

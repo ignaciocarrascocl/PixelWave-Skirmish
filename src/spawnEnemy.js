@@ -10,8 +10,7 @@ export function spawnEnemy(app, player) {
     for (let i = 0; i < types.length; i++) {
       let type = types[i];
       if (wave[type] > state.generatedEnemies[type]) {
-        let xPosition = Math.random() * (app.screen.width - app.screen.width * 0.1 * 2 - 50 * 2) + app.screen.width * 0.1 -50;
-        const enemy = createEnemy(xPosition, app, player, type);
+        const enemy = createEnemy(app, player, type);
         state.enemies.push(enemy);
         state.enemyCounter++;
         state.generatedEnemies[type]++;
@@ -24,7 +23,7 @@ export function spawnEnemy(app, player) {
   }
 }
 
-function createEnemy(xPosition, app, player, type) {
+function createEnemy(app, player, type) {
   const pattern =
     state.patterns[Math.floor(Math.random() * state.patterns.length)];
   const enemy = new PIXI.Container();
@@ -46,6 +45,11 @@ function createEnemy(xPosition, app, player, type) {
           ? movementType2(enemy, app, player).update
           : movementType3(enemy, app).update;
       enemy.move = movement;
+      const maxX =
+        app.screen.width - enemy.width - app.screen.width * 0.2;
+      const minX = app.screen.width * 0.2 + enemy.width;
+      console.log(maxX, minX)
+      const xPosition = Math.random() * (maxX - minX) + minX;
       enemy.position.set(xPosition, -30);
       enemy.customColor = randomColor;
       block.beginFill(randomColor);
@@ -70,10 +74,6 @@ function movementType1(enemy, app) {
   const maxTimeCounter = 240; // doubled the time counter to slow down the movement
   const horizontalSpeed = Math.random() * 2 + 0.5; // random horizontal speed between 0.5 and 2.5
   const amplitude = app.screen.height * 0.005; // amplitude of the sinusoidal movement
-
-  enemy.x = Math.random() * (app.screen.width * 0.8) + app.screen.width * 0.1;
-  enemy.y = -enemy.height;
-
   const update = () => {
     timeCounter++;
 
@@ -88,7 +88,10 @@ function movementType1(enemy, app) {
       }
     }
 
-    enemy.y += amplitude * Math.sin(2 * Math.PI * timeCounter / maxTimeCounter) * moveDirection; // sinusoidal vertical movement
+    enemy.y +=
+      amplitude *
+      Math.sin((2 * Math.PI * timeCounter) / maxTimeCounter) *
+      moveDirection; // sinusoidal vertical movement
     enemy.x += horizontalSpeed * moveDirection; // horizontal movement
 
     // Keep the enemy within the screen bounds
@@ -112,12 +115,10 @@ function movementType2(enemy, app) {
   let moveDirection = 1;
   const maxTimeCounter = 240;
   const amplitude = app.screen.height * 0.005;
-
   const update = () => {
     timeCounter++;
 
     if (timeCounter >= maxTimeCounter) {
-
       currentY = Math.random() * (maxDistance - minDistance) + minDistance;
       timeCounter = 0;
 
@@ -128,7 +129,10 @@ function movementType2(enemy, app) {
       }
     }
 
-    enemy.y += amplitude * Math.sin(2 * Math.PI * timeCounter / maxTimeCounter) * moveDirection;
+    enemy.y +=
+      amplitude *
+      Math.sin((2 * Math.PI * timeCounter) / maxTimeCounter) *
+      moveDirection;
 
     // Keep the enemy within the screen bounds
     if (enemy.x >= app.screen.width - enemyWidth) {
@@ -146,14 +150,13 @@ function movementType2(enemy, app) {
   return { update };
 }
 
-
 function movementType3(enemy, app) {
   const endY1 = app.screen.height * 0.4;
   const endX = enemy.x;
   const endY2 = app.screen.height - enemy.height;
   const endY3 = app.screen.height * 0.1;
   const endY4 = app.screen.height * 0.2;
-
+  enemy.x = Math.random() * (app.screen.width * 0.8) + app.screen.width * 0.1;
   let timeCounter = 0;
   let moveType = 1;
   const moveSpeed = app.screen.height * 0.005;

@@ -1,7 +1,7 @@
 import * as PIXI from "pixi.js";
 
 export function createStartText(app) {
-    const startText = new PIXI.Text("Press any key", {
+    const startText = new PIXI.Text("Press any key\n \n Use arrow keys\n Z key (bomb) - X key (shoot)", {
       fontFamily: "Bungee",
       fontSize: 24,
       fill: "#FFFFFF",

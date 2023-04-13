@@ -76,4 +76,9 @@ export function playSoundtrack() {
 
   // Play the sound
   sound.play();
+
+  // Listen for the 'end' event and replay the sound when it's over
+  sound.on('end', function() {
+    sound.play();
+  });
 }
